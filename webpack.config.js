@@ -48,7 +48,7 @@ const createConfig = (target) => ({
     },
     plugins: target === TARGET.WEB ? [
         mainStyleExtractor,
-        new HtmlWebpackPlugin({ publicPath: './sw-cached/' }),
+        new HtmlWebpackPlugin({ publicPath: './' }),
     ] : []
 })
 
