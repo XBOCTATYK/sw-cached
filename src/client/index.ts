@@ -23,7 +23,7 @@ registerServiceWorker().then(() => {
             workers.forEach(worker => worker.active.postMessage('uuuuu!'))
         })
 
-        fetch('/public/api/stocks').then(res => res.json()).then(console.log)
+        fetch('/public/api/stock.json').then(res => res.json()).then(console.log)
     })
 })
 
