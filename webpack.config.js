@@ -1,41 +1,57 @@
-const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractPlugin = require('mini-css-extract-plugin')
 
 const mainStyleExtractor = new ExtractPlugin({ filename: 'public/css/styles.css'});
 
+process.env.NODE_ENV = 'development'
+
+const SERVER_ROOT = {
+    'production': '',
+    'development': 'https://localhost:3000'
+}
 const TARGET = {
-    WEB: 'web',
-    NODE: 'node',
-    WORKER: 'webworker'
+    WEB: ['web', 'main'],
+    NODE: ['node', 'server'],
+    WORKER: ['webworker', 'cache-worker'],
+    SECOND_PAGE: ['web', 'second']
+}
+const TARGET_IND = 0
+const NAME_IND = 1
+
+const htmlPluginOptions = {
+    [TARGET.WEB[NAME_IND]]: { publicPath: '.' },
+    [TARGET.SECOND_PAGE[NAME_IND]]: { publicPath: SERVER_ROOT[process.env.NODE_ENV], filename: './pages/second/index.html' }
 }
 
 const SRC = './src'
 const entries = {
-    [TARGET.NODE]: SRC + '/server/index.ts',
-    [TARGET.WEB]: SRC + '/client/index.ts',
-    [TARGET.WORKER]: SRC + '/worker/index.ts',
+    [TARGET.NODE[NAME_IND]]: SRC + '/server/index.ts',
+    [TARGET.WEB[NAME_IND]]: SRC + '/client/index.ts',
+    [TARGET.WORKER[NAME_IND]]: SRC + '/worker/index.ts',
+    [TARGET.SECOND_PAGE[NAME_IND]]: SRC + '/client/pages/second/index.ts',
 }
 
 const output = {
-    [TARGET.NODE]: '.',
-    [TARGET.WEB]: './public/js',
-    [TARGET.WORKER]: '.',
+    [TARGET.NODE[TARGET_IND]]: '.',
+    [TARGET.WEB[TARGET_IND]]: './public/js',
+    [TARGET.WORKER[TARGET_IND]]: '.',
 }
 
 const outputNamings = {
-    [TARGET.NODE]: () => 'server',
-    [TARGET.WEB]: (name) => `${name}.[contenthash]`,
-    [TARGET.WORKER]: () => 'cache-worker',
+    [TARGET.NODE[TARGET_IND]]: () => 'server',
+    [TARGET.WEB[TARGET_IND]]: (name) => `${name}.[contenthash]`,
+    [TARGET.WORKER[TARGET_IND]]: () => 'cache-worker',
 }
 
-const createConfig = (target) => ({
+console.log(process.env.NODE_ENV)
+
+const createConfig = ([target, name]) => ({
     target,
-    mode: process.env.NODE_ENV ?? 'development',
-    entry: entries[target],
+    mode: 'development',
+    entry: entries[name],
     output: {
         publicPath: './public',
-        filename: `${output[target]}/${outputNamings[target](target)}.js`
+        filename: `${output[target]}/${outputNamings[target](name)}.js`
     },
     module: {
         rules: [
@@ -44,11 +60,11 @@ const createConfig = (target) => ({
         ]
     },
     resolve: {
-        extensions: ['.ts', '.js', '.tsx', '.jsx'],
+        extensions: ['.ts', '.js', '.tsx', '.jsx', ''],
     },
-    plugins: target === TARGET.WEB ? [
+    plugins: target === TARGET.WEB[TARGET_IND] ? [
         mainStyleExtractor,
-        new HtmlWebpackPlugin({ publicPath: '' }),
+        new HtmlWebpackPlugin(htmlPluginOptions[name]),
     ] : []
 })
 
