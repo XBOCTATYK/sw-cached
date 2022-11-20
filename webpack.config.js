@@ -20,7 +20,7 @@ const entries = {
 const output = {
     [TARGET.NODE]: '.',
     [TARGET.WEB]: './public/js',
-    [TARGET.WORKER]: './public',
+    [TARGET.WORKER]: '.',
 }
 
 const outputNamings = {
