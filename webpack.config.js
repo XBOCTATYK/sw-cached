@@ -14,7 +14,7 @@ const TARGET = {
     WEB: ['web', 'main'],
     NODE: ['node', 'server'],
     WORKER: ['webworker', 'cache-worker'],
-    SECOND_PAGE: ['web', 'second']
+    SECOND_PAGE: ['web', 'second'],
 }
 const TARGET_IND = 0
 const NAME_IND = 1

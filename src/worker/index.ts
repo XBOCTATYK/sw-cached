@@ -1,4 +1,4 @@
-
+let outPort;
 
 self.addEventListener("install", (event) => {
     console.log(event)
@@ -8,7 +8,12 @@ self.addEventListener("activate", (event) => {
     console.log(event)
 })
 
-self.addEventListener("message", (event) => console.log(event))
+self.addEventListener("message", (event) => {
+    outPort = event.ports[0]
+    outPort.onmessage = function (e) {
+        console.log(e)
+    }
+})
 
 function isJs(request: Request) {
     return new RegExp('\.js$').test(request.url)
@@ -16,6 +21,9 @@ function isJs(request: Request) {
 
 self.addEventListener("fetch", (event: FetchEvent) => {
     console.log('oooo API!')
+
+    outPort.postMessage(event.clientId)
+
     const cacheName = "v2"
 
     if (event.request.url == "/sw-cached" ||  event.request.url == "/sw-cached/") {

@@ -17,13 +17,18 @@ const registerServiceWorker = async () => {
     }
 };
 
-registerServiceWorker().then(() => {
-    document.querySelector('html').addEventListener('click', () => {
-        navigator.serviceWorker.getRegistrations().then(workers => {
-            workers.forEach(worker => worker.active.postMessage('uuuuu!'))
-        })
+const serviceWorkerChannel = new MessageChannel()
 
-        fetch('/sw-cached/public/api/stock.json').then(res => res.json()).then(console.log)
+registerServiceWorker().then(() => {
+    navigator.serviceWorker.getRegistrations().then(workers => {
+        console.log('Sending message with port')
+        workers.forEach(worker => worker.active.postMessage('uuuuu!', [serviceWorkerChannel.port2]))
+    })
+
+    document.querySelector('html').addEventListener('click', () => {
+        serviceWorkerChannel.port1.postMessage('hello!')
+
+        fetch('/static/api/stock.json').then(res => res.json()).then(console.log)
     })
 
     document.body.innerHTML = '<button id="workerReload">Reload worker</button>'
@@ -33,6 +38,10 @@ registerServiceWorker().then(() => {
             workers.forEach(worker => worker.update())
         })
     })
+
+    serviceWorkerChannel.port1.onmessage = e => {
+        console.log(e.data)
+    }
 })
 
 
