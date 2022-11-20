@@ -18,7 +18,7 @@ http.createServer(options,function (req, res: ServerResponse) {
 
     res.setHeader("Cache-control", "no-cache")
 
-    if (req.url === '/sw-cached/public/api/stock.json') {
+    if (req.url === '/sw-cached/static/api/stock.json') {
         res.writeHead(200)
         res.write('{ "a": 2 }')
         res.end()

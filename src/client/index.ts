@@ -25,6 +25,14 @@ registerServiceWorker().then(() => {
 
         fetch('/sw-cached/public/api/stock.json').then(res => res.json()).then(console.log)
     })
+
+    document.body.innerHTML = '<button id="workerReload">Reload worker</button>'
+
+    document.getElementById('workerReload').addEventListener('click', () => {
+        navigator.serviceWorker.getRegistrations().then(workers => {
+            workers.forEach(worker => worker.update())
+        })
+    })
 })
 
 

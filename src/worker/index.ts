@@ -10,6 +10,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("message", (event) => console.log(event))
 
+function isJs(request: Request) {
+    return new RegExp('\.js$').test(request.url)
+}
+
 self.addEventListener("fetch", (event: FetchEvent) => {
     console.log('oooo API!')
     const cacheName = "v2"
@@ -27,14 +31,16 @@ self.addEventListener("fetch", (event: FetchEvent) => {
             console.log('cached response')
             console.dir(cachedResponse)
 
-            if (cachedResponse) {
+            if (cachedResponse && cachedResponse.ok) {
                 event.waitUntil(cache.add(event.request))
                 console.log('got from cached')
                 return cachedResponse.clone()
             } else {
                 const response = await fetch(event.request)
                 console.log('got from server')
-                cache.put(event.request, response.clone())
+
+                if (!isJs(event.request))
+                    cache.put(event.request, response.clone())
 
                 return response.clone()
             }

@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractPlugin = require('mini-css-extract-plugin')
+const copyDirRecursive = require('./build-utils/copyDir')
 
-const mainStyleExtractor = new ExtractPlugin({ filename: 'public/css/styles.css'});
+const mainStyleExtractor = new ExtractPlugin({ filename: 'static/css/styles.css'});
 
 process.env.NODE_ENV = 'development'
 
@@ -33,7 +34,7 @@ const entries = {
 
 const output = {
     [TARGET.NODE[TARGET_IND]]: '.',
-    [TARGET.WEB[TARGET_IND]]: './public/js',
+    [TARGET.WEB[TARGET_IND]]: './static/js',
     [TARGET.WORKER[TARGET_IND]]: '.',
 }
 
@@ -50,7 +51,7 @@ const createConfig = ([target, name]) => ({
     mode: 'development',
     entry: entries[name],
     output: {
-        publicPath: './public',
+        publicPath: './static',
         filename: `${output[target]}/${outputNamings[target](name)}.js`
     },
     module: {
@@ -69,3 +70,5 @@ const createConfig = ([target, name]) => ({
 })
 
 module.exports = Object.values(TARGET).map(target => createConfig(target))
+
+copyDirRecursive('static', 'dist')

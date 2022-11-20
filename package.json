@@ -18,7 +18,7 @@
     "workbox-webpack-plugin": "^6.5.4"
   },
   "scripts": {
-    "build": "rmdir .\\dist /s /q && set NODE_ENV=production && webpack --production",
+    "build": "rmdir .\\dist /s /q && set NODE_ENV=production &&  webpack --production",
     "build:watch": "rmdir .\\dist /s /q && set NODE_ENV=development && webpack --watch",
     "start": "node ./dist/server.js"
   }
