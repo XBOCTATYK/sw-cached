@@ -13,9 +13,13 @@ self.addEventListener("message", (event) => console.log(event))
 self.addEventListener("fetch", (event: FetchEvent) => {
     console.log('oooo API!')
     const cacheName = "v1"
+
+    if (event.request.url == "/sw-cached" ||  event.request.url == "/sw-cached/") {
+        event.respondWith(fetch(event.request))
+    }
+
     event.respondWith(
         (async () => {
-            return new Response('ok')
             const cache = await caches.open(cacheName)
             const cachedResponse = await cache.match(event.request)
 
